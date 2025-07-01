@@ -33,13 +33,12 @@ func ABModify(in *{{ .StructName }}) {
     in.{{ $field.Name }} = {{ $field.Value }}
     {{- else if eq $field.Type "set" }}
     in.{{ $field.Name }} = {{ $field.Value }}
-    {{- else if eq $field.Type "custom" }}
-    {{ $field.Code }}
     {{- else if eq $field.Type "append" }}
     in.{{ $field.Name }} = append(in.{{ $field.Name }}, {{ $field.Value }}...)
+    {{- else if eq $field.Type "custom" }}
+    {{ $field.Code }}
     {{- end }}
 {{- end }}
 }
-
 
 func main() {}

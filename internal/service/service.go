@@ -6,7 +6,7 @@ import (
 )
 
 type IGenerator interface {
-	GeneratePlugin(spec models.ABTestSpec) error
+	GeneratePlugin(spec models.ABTestSpec) (string, error)
 }
 
 type Service struct {
