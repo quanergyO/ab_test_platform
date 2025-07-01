@@ -28,5 +28,4 @@ func main() {
 	repo := repository.NewRepository(db)
 	services := service.NewService(repo)
 	_ = handler.NewHandler(services)
-
 }

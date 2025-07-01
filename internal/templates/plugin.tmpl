@@ -1,0 +1,45 @@
+package main
+
+import "C"
+import (
+    "encoding/json"
+)
+
+const ABType = "{{ .ServiceName }}ABTest"
+
+type {{ .StructName }} struct {
+{{- range .Fields }}
+    {{ .Name }} {{ .Type }} {{ if .Tag }}{{ .Tag }}{{ end }}
+{{- end }}
+}
+
+func ModifyResponse(data []byte) []byte {
+    var out {{ .StructName }}
+    if err := json.Unmarshal(data, &out); err != nil {
+        return data
+    }
+
+    ABModify(&out)
+    modified, _ := json.Marshal(out)
+    return modified
+}
+
+func ABModify(in *{{ .StructName }}) {
+    in.ABType = ABType
+    in.ABExists = true
+
+{{- range $field := .Modifications }}
+    {{- if eq $field.Type "multiply" }}
+    in.{{ $field.Name }} = {{ $field.Value }}
+    {{- else if eq $field.Type "set" }}
+    in.{{ $field.Name }} = {{ $field.Value }}
+    {{- else if eq $field.Type "custom" }}
+    {{ $field.Code }}
+    {{- else if eq $field.Type "append" }}
+    in.{{ $field.Name }} = append(in.{{ $field.Name }}, {{ $field.Value }}...)
+    {{- end }}
+{{- end }}
+}
+
+
+func main() {}
